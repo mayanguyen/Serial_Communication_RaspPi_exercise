@@ -1,0 +1,83 @@
+
+Discarded input sections
+
+ .ARM.attributes
+                0x0000000000000000       0x14 build/boot.o
+ .comment       0x0000000000000000       0x12 build/main.o
+ .ARM.attributes
+                0x0000000000000000       0x30 build/main.o
+ .comment       0x0000000000000000       0x12 build/uart.o
+ .ARM.attributes
+                0x0000000000000000       0x30 build/uart.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build/boot.o
+LOAD build/main.o
+LOAD build/uart.o
+
+.init           0x0000000000008000       0x48
+ *(.init)
+ .init          0x0000000000008000       0x48 build/boot.o
+                0x0000000000008000                _start
+
+.text           0x0000000000008048      0x55c
+ *(.text)
+ .text          0x0000000000008048        0x0 build/boot.o
+ .text          0x0000000000008048      0x2b4 build/main.o
+                0x00000000000080b4                on
+                0x00000000000080ec                off
+                0x0000000000008124                loop
+                0x0000000000008168                kernel_main
+ .text          0x00000000000082fc      0x2a8 build/uart.o
+                0x0000000000008368                delay
+                0x0000000000008390                uart_init
+                0x0000000000008458                uart_putc
+                0x00000000000084b4                uart_puts
+                0x0000000000008500                uart_getc
+                0x0000000000008550                uart_getcblock
+                0x0000000000009000                . = ALIGN (0x1000)
+                0x0000000000009000                _text_end = .
+                0x0000000000009000                _rodata_start = .
+
+.rodata         0x0000000000009000       0x14
+ *(.rodata)
+ .rodata        0x0000000000009000       0x14 build/main.o
+                0x000000000000a000                . = ALIGN (0x1000)
+                0x000000000000a000                _rodata_end = .
+                0x000000000000a000                _data_start = .
+
+.data           0x000000000000a000       0x1c
+ *(.data)
+ .data          0x000000000000a000        0x0 build/boot.o
+ .data          0x000000000000a000       0x1c build/main.o
+                0x000000000000a000                direction
+                0x000000000000a004                clr
+                0x000000000000a008                set
+                0x000000000000a00c                direction2
+                0x000000000000a010                GPLEV0
+                0x000000000000a014                GPPUD
+                0x000000000000a018                GPPUDCLK0
+ .data          0x000000000000a01c        0x0 build/uart.o
+                0x000000000000b000                . = ALIGN (0x1000)
+                0x000000000000b000                _data_end = .
+                0x000000000000b000                _bss_start = .
+
+.bss            0x000000000000b000        0x0
+                0x000000000000b000                bss = .
+ *(.bss)
+ .bss           0x000000000000b000        0x0 build/boot.o
+ .bss           0x000000000000b000        0x0 build/main.o
+ .bss           0x000000000000b000        0x0 build/uart.o
+                0x000000000000b000                . = ALIGN (0x1000)
+                0x000000000000b000                _bss_end = .
+                0x000000000000b000                _end = .
+
+/DISCARD/
+ *(*)
+OUTPUT(build/output.elf elf32-littlearm)
